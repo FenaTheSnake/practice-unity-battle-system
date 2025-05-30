@@ -9,6 +9,6 @@ public class MainSceneInstaller : MonoInstaller
     {
         Container.Bind<Map>().AsSingle();
         Container.Bind<GameState>().AsSingle();
-        Container.Bind<EnemyAI>().AsSingle();
+        Container.Bind<EnemyAI>().AsSingle().NonLazy();
     }
 }

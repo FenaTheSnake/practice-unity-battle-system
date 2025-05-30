@@ -1,20 +1,35 @@
 using System;
 using UnityEngine;
 
+public enum AttackType
+{
+    MELEE,  // can attack only when standing nearby
+    RANGED  // can attack any enemy in movement range.
+}
+
 public class Character : MapEntity
 {
     [SerializeField] public bool isPlayerUnit;
     [SerializeField] public float movementRange = 4;
-    [SerializeField] float health = 100.0f;     
+    [SerializeField] float maxHealth = 100.0f;     
     [SerializeField] float strength = 10.0f;
     [SerializeField] float defense = 0.05f;     // 0.05f = 5% of any incoming damage is blocked.
+    [SerializeField] public AttackType attackType = AttackType.MELEE;
 
     public float Health { get; private set; }
     public float RemainingMovement { get; private set; }
 
+    HealthStatus _healthStatus;
+
     private void Start()
     {
-        Health = health;
+        Health = maxHealth;
+
+        _healthStatus = (Instantiate(Resources.Load("UI/HealthStatus", typeof(GameObject))) as GameObject).GetComponent<HealthStatus>();
+        _healthStatus.anchor = transform;
+
+        _healthStatus.Init();
+        _healthStatus.UpdatePosition();
     }
 
     public void PrepareForNewRound()
@@ -37,6 +52,8 @@ public class Character : MapEntity
 
         RemainingMovement -= Vector2Int.Distance(MapPosition, where);
         SetPosition(where);
+
+        _healthStatus.UpdatePosition();
     }
 
     public void Attack(Character c)
@@ -48,6 +65,9 @@ public class Character : MapEntity
     public void RecieveDamage(float damage)
     {
         Health -= damage * (1.0f - defense);
+
+        _healthStatus.SetHealthText(Health, maxHealth);
+
         if(Health <= 0)
         {
             OnDeath();

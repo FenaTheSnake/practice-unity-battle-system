@@ -24,6 +24,8 @@ public class GameInitializer : MonoBehaviour
     {
         BuildMap();
         _gameState.StartFight(playerArmy, enemyArmy);
+
+        Camera.main.GetComponent<GameCamera>().SetFollowing(_map.MapPositionToWorldPosition(new Vector2Int(_map.Width / 2 - 1, _map.Height / 2 - 2)));
     }
 
     public void BuildMap()

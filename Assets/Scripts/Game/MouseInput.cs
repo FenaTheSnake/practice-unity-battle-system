@@ -132,6 +132,10 @@ public class MouseInput : MonoBehaviour
                     var target = cell.entity as Character;
                     var source = _clickedCell.entity as Character;
                     source.Attack(target);
+
+                    ClearAccessableCells();
+                    _clickedCell.RemoveState(MapCellState.CLICKED);
+                    _clickedCell = null;
                 }
             }
         }
@@ -143,25 +147,26 @@ public class MouseInput : MonoBehaviour
         if (ent == null) return;
 
         if (ent is Character c && c.isPlayerUnit) {
-            DrawAccessableCells(c.MapPosition, (int)c.RemainingMovement);
+            DrawAccessableCells(c.MapPosition, (int)c.RemainingMovement, c.attackType == AttackType.MELEE);
         }
     }
 
-    void DrawAccessableCells(Vector2Int center, int radius)
+    void DrawAccessableCells(Vector2Int center, int radius, bool isMelee)
     {
         for (int i = center.x - radius; i <= center.x + radius; i++)
         {
             for (int j = center.y - radius; j <= center.y + radius; j++)
             {
                 if (i < 0 || j < 0 || i >= _map.Width || j >= _map.Height) continue;
-                if (Vector2Int.Distance(center, new Vector2Int(i, j)) > radius) continue;
+                float d = Vector2Int.Distance(center, new Vector2Int(i, j));
+                if (d > radius) continue;
 
                 MapCell cell = _map.map[new Vector2Int(i, j)];
                 if (cell.entity != null)
                 {
                     if(cell.entity is Character c && !c.isPlayerUnit)
                     {
-                        cell.AddState(MapCellState.ENEMY);
+                        if(!isMelee || (d <= 1)) cell.AddState(MapCellState.ENEMY);
                     }
                     continue;
                 } 

@@ -9,7 +9,7 @@ public class GameState
     List<Character> playerArmy;
     List<Character> enemyArmy;
 
-    bool isPlayerMove = true;   // player is doing the move rn.
+    bool isPlayerTurn = true;
 
     Map _map;
 
@@ -52,19 +52,19 @@ public class GameState
 
     public bool CanHoverAndClickCells()
     {
-        return isPlayerMove;
+        return isPlayerTurn;
     }
 
     public void EndTurn()
     {
-        if(isPlayerMove)
+        if(isPlayerTurn)
         {
             foreach(Character c in enemyArmy)
             {
                 c.PrepareForNewRound();
             }
-            isPlayerMove = false;
-            OnPlayerTurnEnd.Invoke();
+            isPlayerTurn = false;
+            OnPlayerTurnEnd?.Invoke();
         }
         else
         {
@@ -72,8 +72,8 @@ public class GameState
             {
                 c.PrepareForNewRound();
             }
-            isPlayerMove = true;
-            OnEnemyTurnEnd.Invoke();
+            isPlayerTurn = true;
+            OnEnemyTurnEnd?.Invoke();
         }
     }
 }

@@ -153,9 +153,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerUnit: 1
   movementRange: 4
-  health: 100
+  maxHealth: 100
   strength: 10
   defense: 0.05
+  attackType: 0
 --- !u!65 &57367885
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -279,7 +280,7 @@ MonoBehaviour:
   enemyArmy:
   - {fileID: 1648657857}
   mapCellPrefab: {fileID: 7510348952381144387, guid: d1d83ba1be3ec6e4ebb96217e8e61906, type: 3}
-  mapSize: {x: 8, y: 8}
+  mapSize: {x: 10, y: 10}
 --- !u!4 &196391872
 Transform:
   m_ObjectHideFlags: 0
@@ -308,6 +309,7 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
+  - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -445,6 +447,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8d000869fdf4c346a24fad50065665d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &330585549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d39631d74d4bb54bac576aa01374847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distance: 7
+  angle: 270
+  angleOfAttack: 75
+  maxDistanceBetweenCameraAndPlayer: 10
+  anchorMaxRadius: 10
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,9 +1103,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerUnit: 0
   movementRange: 4
-  health: 100
+  maxHealth: 100
   strength: 10
   defense: 0.05
+  attackType: 0
 --- !u!135 &1648657858
 SphereCollider:
   m_ObjectHideFlags: 0
