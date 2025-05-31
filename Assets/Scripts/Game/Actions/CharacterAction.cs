@@ -9,7 +9,14 @@ public enum CharacterActionType
     ALLY_TARGET,
     ANY_TARGET,
     CELL,
-    OPEN_ACTIONS
+    OPEN_ACTIONS,
+
+    ALL_ALLIES,
+    ALL_ENEMIES,
+    ALL_UNITS,
+    RANDOM_ALLY,
+    RANDOM_ENEMY,
+    RANDOM_UNIT
 }
 
 [CreateAssetMenu(fileName = "CharacterAction", menuName = "CharacterAction/CharacterAction")]
@@ -23,17 +30,6 @@ public class CharacterAction : ScriptableObject
     public int requiredMovement = 1;
 
     public List<CharacterActionEffect> effects;
-
-    //public void Perform()
-    //{
-    //    switch(actionType)
-    //    {
-    //        case CharacterActionType.TARGET:
-    //            PerformTarget(); break;
-    //        case CharacterActionType.OPEN_ACTIONS:
-    //            PerformOpenActions(); break;
-    //    }
-    //}
 
     public void PerformTarget(Character source, Character target)
     {

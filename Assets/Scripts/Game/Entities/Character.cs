@@ -21,10 +21,14 @@ public class Character : MapEntity
 
     [SerializeField] public List<CharacterAction> actionSet;
 
-    public float Health { get; private set; }
-    public float Mana { get; private set; }
+    private float m_Health = 0;
+    private float m_Mana = 0;
+    private float m_RemainingMovement = 0;
+
+    public float Health { get => m_Health; private set { m_Health = Mathf.Min(Mathf.Max(value, 0), maxHealth); } }
+    public float Mana { get => m_Mana; private set { m_Mana = Mathf.Min(Mathf.Max(value, 0), maxMana); } }
     public int AP { get; private set; }
-    public float RemainingMovement { get; private set; }
+    public float RemainingMovement { get => m_RemainingMovement; private set { m_RemainingMovement = Mathf.Min(Mathf.Max(value, 0), movementRange); } }
 
     HealthStatus _healthStatus;
 
@@ -182,7 +186,7 @@ public class Character : MapEntity
                 "\nMP: " + Mana + "/" + maxMana + 
                 "\nAP: " + AP + 
                 "\nОчки действия: " + (int)RemainingMovement + "/" + movementRange + 
-                "\nАтака: " + strength + 
+                "\nАтака: " + strength + " (" + (attackType == AttackType.MELEE ? "Ближ." : "Дальн.") + ")" +
                 "\nЗащита:" + defense * 100 + "%";
     }
 
@@ -199,5 +203,10 @@ public class Character : MapEntity
     public void AddAP(int amount)
     {
         AP += amount;
+    }
+    public void Heal(float amount)
+    {
+        Health += amount;
+        _healthStatus.SetHealthText(Health, maxHealth);
     }
 }

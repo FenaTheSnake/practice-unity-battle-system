@@ -10,6 +10,8 @@ public class GameInitializer : MonoBehaviour
     [SerializeField] GameObject mapCellPrefab;
     [SerializeField] Vector2Int mapSize = new Vector2Int(8, 8);
 
+    [SerializeField] List<CharacterAction> cards;
+
     GameState _gameState;
     Map _map;
 
@@ -23,7 +25,7 @@ public class GameInitializer : MonoBehaviour
     private void Start()
     {
         BuildMap();
-        _gameState.StartFight(playerArmy, enemyArmy);
+        _gameState.StartFight(playerArmy, enemyArmy, cards);
 
         Camera.main.GetComponent<GameCamera>().SetFollowing(_map.MapPositionToWorldPosition(new Vector2Int(_map.Width / 2, _map.Height / 2 - 2)));
     }

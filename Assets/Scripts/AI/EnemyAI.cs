@@ -24,7 +24,7 @@ public class EnemyAI
     async public void Think()
     {
         Debug.Log("[AI] Thinking...");
-        await UniTask.Delay(2000);
+        await UniTask.Delay(500);
         Debug.Log("[AI] Imma gonna skip this turn, bro.");
         _gameState.EndTurn();
     }

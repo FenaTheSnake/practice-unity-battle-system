@@ -171,7 +171,7 @@ public class MouseInput : MonoBehaviour
             {
                 if (c.isPlayerUnit)
                 {
-                    _gameState.OpenCharacterActions(c);
+                    _gameState.ShowCharacterActions(c);
                 }
                 _gameState.SetUnitStatsText(c);
             }
