@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using Zenject;
 
@@ -13,6 +15,7 @@ public class MouseInput : MonoBehaviour
     InputAction _action;
 
     LayerMask _mapMask;
+    int UILayer;
 
     GameState _gameState;
     Map _map;
@@ -38,6 +41,7 @@ public class MouseInput : MonoBehaviour
         _cam = Camera.main;
 
         _mapMask = LayerMask.GetMask("Map");
+        UILayer = LayerMask.NameToLayer("UI");
     }
 
     void Update()
@@ -76,6 +80,7 @@ public class MouseInput : MonoBehaviour
     void OnCursorClicked(InputAction.CallbackContext context)
     {
         if (!_gameState.CanHoverAndClickCells()) return;
+        if (IsPointerOverUIElement()) return;
 
         if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 1000.0f, _mapMask))
         {
@@ -85,7 +90,6 @@ public class MouseInput : MonoBehaviour
             if (_clickedCell != null)
             {
                 _clickedCell.RemoveState(MapCellState.CLICKED);
-                ClearAccessableCells();
                 if (_clickedCell == cell)
                 {
                     _clickedCell = null;
@@ -143,11 +147,34 @@ public class MouseInput : MonoBehaviour
 
     void CellClicked(MapCell cell)
     {
-        MapEntity ent = _map.map[cell.mapPosition].entity;
-        if (ent == null) return;
+        if(cell.GetState(MapCellState.ENEMY))
+        {
+            _gameState.ExecuteSavedCharacterActionOnTarget(cell.entity as Character);
+            ClearAccessableCells();
+            _clickedCell.RemoveState(MapCellState.CLICKED);
+            _clickedCell = null;
+        }
+        if(cell.GetState(MapCellState.ACCESSABLE))
+        {
+            _gameState.ExecuteSavedCharacterActionOnCell(cell);
+            ClearAccessableCells();
+            _clickedCell.RemoveState(MapCellState.CLICKED);
+            _clickedCell = null;
+        }
+        else
+        {
+            ClearAccessableCells();
+            MapEntity ent = _map.map[cell.mapPosition].entity;
+            if (ent == null) return;
 
-        if (ent is Character c && c.isPlayerUnit) {
-            DrawAccessableCells(c.MapPosition, (int)c.RemainingMovement, c.attackType == AttackType.MELEE);
+            if (ent is Character c)
+            {
+                if (c.isPlayerUnit)
+                {
+                    _gameState.OpenCharacterActions(c);
+                }
+                _gameState.SetUnitStatsText(c);
+            }
         }
     }
 
@@ -162,14 +189,14 @@ public class MouseInput : MonoBehaviour
                 if (d > radius) continue;
 
                 MapCell cell = _map.map[new Vector2Int(i, j)];
-                if (cell.entity != null)
-                {
-                    if(cell.entity is Character c && !c.isPlayerUnit)
-                    {
-                        if(!isMelee || (d <= 1)) cell.AddState(MapCellState.ENEMY);
-                    }
-                    continue;
-                } 
+                //if (cell.entity != null)
+                //{
+                //    if(cell.entity is Character c && !c.isPlayerUnit)
+                //    {
+                //        if(!isMelee || (d <= 1)) cell.AddState(MapCellState.ENEMY);
+                //    }
+                //    continue;
+                //} 
 
                 cell.AddState(MapCellState.ACCESSABLE);
             }
@@ -183,5 +210,38 @@ public class MouseInput : MonoBehaviour
             cell.Value.RemoveState(MapCellState.ACCESSABLE);
             cell.Value.RemoveState(MapCellState.ENEMY);
         }
+        _gameState.CloseCharacterActions();
+        _gameState.ClearUnitStatsText();
+    }
+
+
+    //Returns 'true' if we touched or hovering on Unity UI element.
+    public bool IsPointerOverUIElement()
+    {
+        return IsPointerOverUIElement(GetEventSystemRaycastResults());
+    }
+
+
+    //Returns 'true' if we touched or hovering on Unity UI element.
+    private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
+    {
+        for (int index = 0; index < eventSystemRaysastResults.Count; index++)
+        {
+            RaycastResult curRaysastResult = eventSystemRaysastResults[index];
+            if (curRaysastResult.gameObject.layer == UILayer)
+                return true;
+        }
+        return false;
+    }
+
+
+    //Gets all event system raycast results of current mouse or touch position.
+    static List<RaycastResult> GetEventSystemRaycastResults()
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        List<RaycastResult> raysastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raysastResults);
+        return raysastResults;
     }
 }

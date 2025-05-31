@@ -37,9 +37,9 @@ public class GameCamera : MonoBehaviour
     void FixedUpdate()
     {
         Vector3 camPos = Vector3.zero;
-        camPos.x = _curPos.x + Mathf.Cos(angle * Mathf.Deg2Rad) * distance;
+        camPos.x = _curPos.x + Mathf.Cos(angle * Mathf.Deg2Rad) * (distance - Mathf.Sin(angleOfAttack * Mathf.Deg2Rad) * distance);
         camPos.y = _curPos.y + Mathf.Sin(angleOfAttack * Mathf.Deg2Rad) * distance;
-        camPos.z = _curPos.z + Mathf.Sin(angle * Mathf.Deg2Rad) * distance;
+        camPos.z = _curPos.z + Mathf.Sin(angle * Mathf.Deg2Rad) * (distance - Mathf.Sin(angleOfAttack * Mathf.Deg2Rad) * distance);
 
         transform.position = camPos;
         transform.LookAt(_curPos, Vector3.up);

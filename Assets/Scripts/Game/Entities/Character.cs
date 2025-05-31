@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Zenject;
 
 public enum AttackType
 {
@@ -12,18 +14,33 @@ public class Character : MapEntity
     [SerializeField] public bool isPlayerUnit;
     [SerializeField] public float movementRange = 4;
     [SerializeField] float maxHealth = 100.0f;     
+    [SerializeField] float maxMana = 40.0f;     
     [SerializeField] float strength = 10.0f;
     [SerializeField] float defense = 0.05f;     // 0.05f = 5% of any incoming damage is blocked.
     [SerializeField] public AttackType attackType = AttackType.MELEE;
 
+    [SerializeField] public List<CharacterAction> actionSet;
+
     public float Health { get; private set; }
+    public float Mana { get; private set; }
+    public int AP { get; private set; }
     public float RemainingMovement { get; private set; }
 
     HealthStatus _healthStatus;
 
+    Map _map;
+
+    [Inject]
+    public void Construct(Map map)
+    {
+        _map = map;
+    }
+
     private void Start()
     {
         Health = maxHealth;
+        Mana = maxMana;
+        AP = 0;
 
         _healthStatus = (Instantiate(Resources.Load("UI/HealthStatus", typeof(GameObject))) as GameObject).GetComponent<HealthStatus>();
         _healthStatus.anchor = transform;
@@ -35,6 +52,7 @@ public class Character : MapEntity
     public void PrepareForNewRound()
     {
         RemainingMovement = movementRange;
+        Mana = Mathf.Min(maxMana, Mana + 5);
     }
 
     public bool IsMovementPossible(Vector2Int where)
@@ -58,13 +76,18 @@ public class Character : MapEntity
 
     public void Attack(Character c)
     {
-        c.RecieveDamage(strength);
-        RemainingMovement = 0;
+        c.RecieveDamage(strength, true);
     }
 
-    public void RecieveDamage(float damage)
+    public void RecieveDamage(float damage, bool useDefense)
     {
-        Health -= damage * (1.0f - defense);
+        if (useDefense)
+        {
+            Health -= damage * (1.0f - defense);
+        }else
+        {
+            Health -= damage;
+        }
 
         _healthStatus.SetHealthText(Health, maxHealth);
 
@@ -77,5 +100,104 @@ public class Character : MapEntity
     private void OnDeath()
     {
         throw new NotImplementedException();
+    }
+
+    public void DrawAccessableCells()
+    {
+        Vector2Int center = MapPosition;
+        int radius = (int)RemainingMovement;
+
+        for (int i = center.x - radius; i <= center.x + radius; i++)
+        {
+            for (int j = center.y - radius; j <= center.y + radius; j++)
+            {
+                if (i < 0 || j < 0 || i >= _map.Width || j >= _map.Height) continue;
+                float d = Vector2Int.Distance(center, new Vector2Int(i, j));
+                if (d > radius) continue;
+
+                MapCell cell = _map.map[new Vector2Int(i, j)];
+                if (cell.entity != null) continue;
+
+                cell.AddState(MapCellState.ACCESSABLE);
+            }
+        }
+    }
+
+    public void DrawAccessableEnemies()
+    {
+        Vector2Int center = MapPosition;
+        int radius = (int)RemainingMovement;
+
+        for (int i = center.x - radius; i <= center.x + radius; i++)
+        {
+            for (int j = center.y - radius; j <= center.y + radius; j++)
+            {
+                if (i < 0 || j < 0 || i >= _map.Width || j >= _map.Height) continue;
+                float d = Vector2Int.Distance(center, new Vector2Int(i, j));
+                if (d > radius) continue;
+
+                MapCell cell = _map.map[new Vector2Int(i, j)];
+                if (cell.entity != null)
+                {
+                    if (cell.entity is Character c && !c.isPlayerUnit)
+                    {
+                        if (attackType == AttackType.RANGED || (d <= 1)) cell.AddState(MapCellState.ENEMY);
+                    }
+                    continue;
+                }
+            }
+        }
+    }
+
+    public void DrawAccessableAllies()
+    {
+        Vector2Int center = MapPosition;
+        int radius = (int)RemainingMovement;
+
+        for (int i = center.x - radius; i <= center.x + radius; i++)
+        {
+            for (int j = center.y - radius; j <= center.y + radius; j++)
+            {
+                if (i < 0 || j < 0 || i >= _map.Width || j >= _map.Height) continue;
+                float d = Vector2Int.Distance(center, new Vector2Int(i, j));
+                if (d > radius) continue;
+
+                MapCell cell = _map.map[new Vector2Int(i, j)];
+                if (cell.entity != null)
+                {
+                    if (cell.entity is Character c && c.isPlayerUnit)
+                    {
+                        cell.AddState(MapCellState.ACCESSABLE);
+                    }
+                    continue;
+                }
+            }
+        }
+    }
+
+    public string StatsAsText()
+    {
+        return  name + 
+                "\nHP: " + Health + "/" + maxHealth + 
+                "\nMP: " + Mana + "/" + maxMana + 
+                "\nAP: " + AP + 
+                "\nОчки действия: " + (int)RemainingMovement + "/" + movementRange + 
+                "\nАтака: " + strength + 
+                "\nЗащита:" + defense * 100 + "%";
+    }
+
+    public bool CanUseAction(CharacterAction action)
+    {
+        return Mana >= action.requiredMP && AP >= action.requiredAP && RemainingMovement >= action.requiredMovement;
+    }
+    public void SpendManaAndAPOnAction(CharacterAction action)
+    {
+        Mana -= action.requiredMP;
+        AP -= action.requiredAP;
+        RemainingMovement -= action.requiredMovement;
+    }
+    public void AddAP(int amount)
+    {
+        AP += amount;
     }
 }
