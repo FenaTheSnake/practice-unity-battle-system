@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0696219452ffb234db5ff9bc549fe5b8, type: 3}
   m_Name: SmallHeal
   m_EditorClassIdentifier: 
-  effectType: 5
+  effectType: 4
   floatValue: 15
   intValue: 0

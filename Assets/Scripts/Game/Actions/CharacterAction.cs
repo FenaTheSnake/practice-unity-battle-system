@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using static Unity.VisualScripting.Member;
 using static UnityEngine.GraphicsBuffer;
@@ -19,6 +20,12 @@ public enum CharacterActionType
     RANDOM_UNIT
 }
 
+public enum CharacterActionAIHint
+{
+    MOVEMENT,
+    ATTACK_SINGLE,
+}
+
 [CreateAssetMenu(fileName = "CharacterAction", menuName = "CharacterAction/CharacterAction")]
 public class CharacterAction : ScriptableObject
 {
@@ -31,6 +38,10 @@ public class CharacterAction : ScriptableObject
 
     public List<CharacterActionEffect> effects;
 
+    [Space]
+    // Подсказка для ИИ насчет этого действия
+    public CharacterActionAIHint actionAIHint;
+
     public void PerformTarget(Character source, Character target)
     {
         Dictionary<string, object> parameters = new Dictionary<string, object>();
@@ -40,8 +51,6 @@ public class CharacterAction : ScriptableObject
         {
             effect.Execute(parameters);
         }
-
-        
     }
 
     public void PerformCell(MapCell cell, Character source)

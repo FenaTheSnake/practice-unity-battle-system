@@ -5,14 +5,18 @@ using UnityEngine;
 
 public enum CharacterActionEffectType
 {
-    SOURCE_ATTACK_TARGET,
     MOVE_TO_CELL,
-    SOURCE_DEAL_CONSTANT_DAMAGE_TARGET,
+    SOURCE_ATTACK_TARGET,
     SOURCE_ADD_AP,
     SOURCE_HEAL,
 
     TARGET_HEAL,
-    TARGET_DEAL_DAMAGE
+    TARGET_DEAL_DAMAGE,
+    TARGET_DEAL_CONSTANT_DAMAGE,
+    TARGET_ADD_DEFENSE,
+    TARGET_ADD_ATTACK,
+    TARGET_ADD_MOVEMENT_RANGE,
+    TARGET_HEAL_MANA
 }
 
 [CreateAssetMenu(fileName = "CharacterActionEffect", menuName = "CharacterAction/CharacterActionEffect")]
@@ -41,7 +45,7 @@ public class CharacterActionEffect : ScriptableObject
                 source.Move(cell.mapPosition);
 
                 break;
-            case CharacterActionEffectType.SOURCE_DEAL_CONSTANT_DAMAGE_TARGET:
+            case CharacterActionEffectType.TARGET_DEAL_CONSTANT_DAMAGE:
                 target = parameters["target"] as Character;
 
                 if (target == null) break;
@@ -65,11 +69,35 @@ public class CharacterActionEffect : ScriptableObject
                 if (target == null) break;
                 target.Heal(floatValue);
                 break;
+            case CharacterActionEffectType.TARGET_HEAL_MANA:
+                target = parameters["target"] as Character;
+
+                if (target == null) break;
+                target.HealMana(floatValue);
+                break;
             case CharacterActionEffectType.TARGET_DEAL_DAMAGE:
                 target = parameters["target"] as Character;
 
                 if (target == null) break;
-                target.RecieveDamage(floatValue, false);
+                target.RecieveDamage(floatValue, true);
+                break;
+            case CharacterActionEffectType.TARGET_ADD_DEFENSE:
+                target = parameters["target"] as Character;
+
+                if (target == null) break;
+                target.AddDefense(floatValue);
+                break;
+            case CharacterActionEffectType.TARGET_ADD_MOVEMENT_RANGE:
+                target = parameters["target"] as Character;
+
+                if (target == null) break;
+                target.AddMovementRange(floatValue);
+                break;
+            case CharacterActionEffectType.TARGET_ADD_ATTACK:
+                target = parameters["target"] as Character;
+
+                if (target == null) break;
+                target.AddAttack(floatValue);
                 break;
         }
     }
@@ -95,7 +123,7 @@ public class CharacterActionEffectEditor : Editor
 
         switch(script.effectType)
         {
-            case CharacterActionEffectType.SOURCE_DEAL_CONSTANT_DAMAGE_TARGET:
+            case CharacterActionEffectType.TARGET_DEAL_CONSTANT_DAMAGE:
             case CharacterActionEffectType.TARGET_DEAL_DAMAGE:
                 script.floatValue = EditorGUILayout.FloatField("Damage:", script.floatValue);
                 break;
@@ -104,7 +132,11 @@ public class CharacterActionEffectEditor : Editor
                 break;
             case CharacterActionEffectType.SOURCE_HEAL:
             case CharacterActionEffectType.TARGET_HEAL:
-                script.floatValue = EditorGUILayout.FloatField("Added Health:", script.floatValue);
+            case CharacterActionEffectType.TARGET_HEAL_MANA:
+            case CharacterActionEffectType.TARGET_ADD_DEFENSE:
+            case CharacterActionEffectType.TARGET_ADD_ATTACK:
+            case CharacterActionEffectType.TARGET_ADD_MOVEMENT_RANGE:
+                script.floatValue = EditorGUILayout.FloatField("How much:", script.floatValue);
                 break;
             default:
                 break;

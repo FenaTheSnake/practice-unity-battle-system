@@ -42,6 +42,6 @@ public class HealthStatus : MonoBehaviour
     }
     public void SetHealthText(float health, float maxHealth)
     {
-        _text.text = health + "/" + maxHealth;
+        _text.text = health.ToString("0") + "/" + maxHealth.ToString("0");
     }
 }

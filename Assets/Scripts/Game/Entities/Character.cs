@@ -33,11 +33,13 @@ public class Character : MapEntity
     HealthStatus _healthStatus;
 
     Map _map;
+    GameState _gameState;
 
     [Inject]
-    public void Construct(Map map)
+    public void Construct(GameState gameState, Map map)
     {
         _map = map;
+        _gameState = gameState;
     }
 
     private void Start()
@@ -103,7 +105,9 @@ public class Character : MapEntity
 
     private void OnDeath()
     {
-        throw new NotImplementedException();
+        _gameState.RemoveUnit(this);
+        Destroy(_healthStatus.gameObject);
+        Destroy(this.gameObject);
     }
 
     public void DrawAccessableCells()
@@ -130,7 +134,7 @@ public class Character : MapEntity
     public void DrawAccessableEnemies()
     {
         Vector2Int center = MapPosition;
-        int radius = (int)RemainingMovement;
+        int radius = attackType == AttackType.MELEE ? (int)RemainingMovement : (int)movementRange;
 
         for (int i = center.x - radius; i <= center.x + radius; i++)
         {
@@ -182,8 +186,8 @@ public class Character : MapEntity
     public string StatsAsText()
     {
         return  name + 
-                "\nHP: " + Health + "/" + maxHealth + 
-                "\nMP: " + Mana + "/" + maxMana + 
+                "\nHP: " + Health.ToString("0") + "/" + maxHealth + 
+                "\nMP: " + Mana.ToString("0") + "/" + maxMana + 
                 "\nAP: " + AP + 
                 "\nОчки действия: " + (int)RemainingMovement + "/" + movementRange + 
                 "\nАтака: " + strength + " (" + (attackType == AttackType.MELEE ? "Ближ." : "Дальн.") + ")" +
@@ -208,5 +212,27 @@ public class Character : MapEntity
     {
         Health += amount;
         _healthStatus.SetHealthText(Health, maxHealth);
+    }
+    public void HealMana(float amount)
+    {
+        Health += amount;
+    }
+    public void AddDefense(float amount)
+    {
+        defense += amount;
+    }
+    public void AddMovementRange(float amount)
+    {
+        movementRange += amount;
+        if (RemainingMovement == movementRange - amount) RemainingMovement = movementRange;
+    }
+    public void AddAttack(float amount)
+    {
+        strength += amount;
+    }
+
+    public void DoALittleMovementInDirectionToCharacter(Character c)
+    {
+        transform.position = Vector3.MoveTowards(transform.position, _map.MapPositionToWorldPosition(c.MapPosition), 0.75f);
     }
 }

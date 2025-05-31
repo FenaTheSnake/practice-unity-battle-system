@@ -4,14 +4,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using static Unity.VisualScripting.Member;
 
 public class GameState
 {
     public const int MAX_ROUNDS = 10;
     public int Round {  get; private set; }
 
-    List<Character> playerArmy;
-    List<Character> enemyArmy;
+    public List<Character> playerArmy;
+    public List<Character> enemyArmy;
     List<CharacterAction> cards;
 
     bool isPlayerTurn = true;
@@ -205,6 +206,7 @@ public class GameState
     {
         Debug.Assert(tempCharacterAction != null);
         whoseCharacterActions.SpendManaAndAPOnAction(tempCharacterAction);
+        whoseCharacterActions.DoALittleMovementInDirectionToCharacter(target);
 
         tempCharacterAction.PerformTarget(whoseCharacterActions, target);
         tempCharacterAction = null;
@@ -236,7 +238,12 @@ public class GameState
     }
     public void StopDisplayingCharacterActionDescription()
     {
-        if (whoseCharacterActions) SetUnitStatsText(whoseCharacterActions);
+        if (isChoosingCard)
+        {
+            TextMeshProUGUI text = GameObject.Find("UnitStatsText").GetComponent<TextMeshProUGUI>();
+            text.text = "Выберите одну из карт:";
+        }
+        else if (whoseCharacterActions) SetUnitStatsText(whoseCharacterActions);
         else ClearUnitStatsText();
     }
 
@@ -267,5 +274,11 @@ public class GameState
         TextMeshProUGUI text = GameObject.Find("UnitStatsText").GetComponent<TextMeshProUGUI>();
 
         text.text = "";
+    }
+
+    public void RemoveUnit(Character c)
+    {
+        if(c.isPlayerUnit) playerArmy.Remove(c);
+        else enemyArmy.Remove(c);
     }
 }

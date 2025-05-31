@@ -8,6 +8,8 @@ public class MapEntity : MonoBehaviour
     Vector2Int m_MapPosition;
     public Vector2Int MapPosition { get => m_MapPosition; set { SetPosition(value); } }
 
+    Vector3 visualTargetPosition;
+
     Map _map;
 
     [Inject]
@@ -29,7 +31,12 @@ public class MapEntity : MonoBehaviour
         _map.map[MapPosition].entity = null;
 
         m_MapPosition = where;
-        transform.position = _map.MapPositionToWorldPosition(where);
+        visualTargetPosition = _map.MapPositionToWorldPosition(where);
         _map.map[where].entity = this;
+    }
+
+    private void Update()
+    {
+        transform.position = Vector3.Lerp(transform.position, visualTargetPosition, 0.2f);
     }
 }
