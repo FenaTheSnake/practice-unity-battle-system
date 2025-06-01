@@ -69,6 +69,21 @@ public class GameState
 
     public void EndTurn()
     {
+        for(int i = 0; i < enemyArmy.Count; i++)
+        {
+            if(enemyArmy[i].markForDelete)
+            {
+                enemyArmy.RemoveAt(i--);
+            }
+        }
+        for (int i = 0; i < playerArmy.Count; i++)
+        {
+            if (playerArmy[i].markForDelete)
+            {
+                playerArmy.RemoveAt(i--);
+            }
+        }
+
         if(isPlayerTurn)
         {
             foreach(Character c in enemyArmy)
@@ -95,6 +110,7 @@ public class GameState
 
         GameObject.Find("TurnsLeftText").GetComponent<TextMeshProUGUI>().text = (MAX_ROUNDS - Round) + " ходов осталось";
         CheckForWinLoseConditions();
+
     }
 
     void CheckForWinLoseConditions()
@@ -278,7 +294,6 @@ public class GameState
 
     public void RemoveUnit(Character c)
     {
-        if(c.isPlayerUnit) playerArmy.Remove(c);
-        else enemyArmy.Remove(c);
+        c.markForDelete = true;
     }
 }

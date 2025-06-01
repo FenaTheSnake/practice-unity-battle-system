@@ -151,15 +151,16 @@ MonoBehaviour:
   isPlayerUnit: 1
   movementRange: 4
   maxHealth: 100
-  maxMana: 40
-  strength: 10
-  defense: 0.05
+  maxMana: 20
+  strength: 15
+  defense: 0.1
   attackType: 0
   actionSet:
   - {fileID: 11400000, guid: d57b4c3ddb5c0b94f881cdeeb1f3c4c8, type: 2}
   - {fileID: 11400000, guid: 7774bd312ec16db47a52217186b9b352, type: 2}
   - {fileID: 11400000, guid: 63c877d624063ec48a440c51efd2b84a, type: 2}
   - {fileID: 11400000, guid: 851e3314f4e9d184e9070d4e02a6e981, type: 2}
+  markForDelete: 0
 --- !u!4 &57367888
 Transform:
   m_ObjectHideFlags: 0
@@ -1059,14 +1060,15 @@ MonoBehaviour:
   isPlayerUnit: 0
   movementRange: 5
   maxHealth: 60
-  maxMana: 10
-  strength: 15
+  maxMana: 15
+  strength: 10
   defense: 0.01
   attackType: 1
   actionSet:
   - {fileID: 11400000, guid: 7774bd312ec16db47a52217186b9b352, type: 2}
   - {fileID: 11400000, guid: d57b4c3ddb5c0b94f881cdeeb1f3c4c8, type: 2}
   - {fileID: 11400000, guid: 851e3314f4e9d184e9070d4e02a6e981, type: 2}
+  markForDelete: 0
 --- !u!4 &753285946
 Transform:
   m_ObjectHideFlags: 0
@@ -1267,14 +1269,16 @@ MonoBehaviour:
   isPlayerUnit: 1
   movementRange: 5
   maxHealth: 60
-  maxMana: 10
-  strength: 15
+  maxMana: 20
+  strength: 10
   defense: 0.01
   attackType: 1
   actionSet:
   - {fileID: 11400000, guid: 7774bd312ec16db47a52217186b9b352, type: 2}
+  - {fileID: 11400000, guid: c3c13a8e489ca7c45b67da78d4226307, type: 2}
   - {fileID: 11400000, guid: d57b4c3ddb5c0b94f881cdeeb1f3c4c8, type: 2}
   - {fileID: 11400000, guid: 851e3314f4e9d184e9070d4e02a6e981, type: 2}
+  markForDelete: 0
 --- !u!4 &877231098
 Transform:
   m_ObjectHideFlags: 0
@@ -1969,15 +1973,16 @@ MonoBehaviour:
   isPlayerUnit: 0
   movementRange: 4
   maxHealth: 100
-  maxMana: 40
-  strength: 10
-  defense: 0.05
+  maxMana: 20
+  strength: 15
+  defense: 0.1
   attackType: 0
   actionSet:
   - {fileID: 11400000, guid: 7774bd312ec16db47a52217186b9b352, type: 2}
   - {fileID: 11400000, guid: d57b4c3ddb5c0b94f881cdeeb1f3c4c8, type: 2}
   - {fileID: 11400000, guid: 63c877d624063ec48a440c51efd2b84a, type: 2}
   - {fileID: 11400000, guid: 851e3314f4e9d184e9070d4e02a6e981, type: 2}
+  markForDelete: 0
 --- !u!4 &1648657861
 Transform:
   m_ObjectHideFlags: 0
@@ -2387,14 +2392,15 @@ MonoBehaviour:
   isPlayerUnit: 0
   movementRange: 5
   maxHealth: 60
-  maxMana: 10
-  strength: 15
+  maxMana: 15
+  strength: 10
   defense: 0.01
   attackType: 1
   actionSet:
   - {fileID: 11400000, guid: 7774bd312ec16db47a52217186b9b352, type: 2}
   - {fileID: 11400000, guid: d57b4c3ddb5c0b94f881cdeeb1f3c4c8, type: 2}
   - {fileID: 11400000, guid: 851e3314f4e9d184e9070d4e02a6e981, type: 2}
+  markForDelete: 0
 --- !u!4 &2134028724
 Transform:
   m_ObjectHideFlags: 0

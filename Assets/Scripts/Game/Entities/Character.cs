@@ -30,6 +30,8 @@ public class Character : MapEntity
     public int AP { get; private set; }
     public float RemainingMovement { get => m_RemainingMovement; private set { m_RemainingMovement = Mathf.Min(Mathf.Max(value, 0), movementRange); } }
 
+    public bool markForDelete = false;
+
     HealthStatus _healthStatus;
 
     Map _map;
@@ -53,6 +55,7 @@ public class Character : MapEntity
 
         _healthStatus.Init();
         _healthStatus.UpdatePosition();
+        _healthStatus.SetHealthText(Health, maxHealth);
     }
 
     public void PrepareForNewRound()
